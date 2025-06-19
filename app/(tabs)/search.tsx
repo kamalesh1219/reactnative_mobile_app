@@ -6,16 +6,15 @@ import SearchBar from "@/components/SearchBar";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
+import { updateSearchCount } from '@/services/appwrite';
 import useFetch from "@/services/usefetch";
-
-
 
 const Search = () => {
     const [searchQuery,setSearchQuery] = useState('')
  
 
   const {
-      data: movies,
+      data: movies = [],
       loading,
       error,
       refetch:loadMovies,
@@ -23,11 +22,13 @@ const Search = () => {
     } = useFetch(() => fetchMovies({ query:searchQuery }),false);
 
   useEffect(() =>{ 
-  
-
+   
     const timeoutId = setTimeout(async () => {
       if(searchQuery.trim()){
         await loadMovies();
+
+        if(movies?.length! > 0 && movies?.[0])
+         await updateSearchCount(searchQuery,movies[0]);
       }else{
         reset()
       }
@@ -53,7 +54,7 @@ const Search = () => {
          ListHeaderComponent={
           <>
            <View className="w-full flex-row justify-center mt-20 items-center">
-              <Image source={icons.logo} className="w-12 h-10" />
+              <Image source={icons.movieLogo} className="w-14 h-16" />
             </View>
 
              <View className="my-5">

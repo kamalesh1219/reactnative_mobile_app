@@ -14,8 +14,7 @@ const TabIcon = ({ focused,icon,title}:any) =>{
         )
      }
      return( 
-        <View>
-            
+        <View>          
             <Image source={icon} tintColor='A8B5DB' className='size-5'></Image>
         </View>
      )
@@ -53,7 +52,7 @@ const _layout = () => {
             tabBarIcon:({ focused }) => (
               <TabIcon
                  focused={focused}
-                 icon={icons.home}
+                 icon={icons.index}  
                  title='Home'
                 />
             )
