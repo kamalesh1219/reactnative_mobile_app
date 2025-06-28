@@ -1,10 +1,13 @@
-import { fetchMovieDetails } from '@/services/api'; // your TMDB API function
+import { fetchMovieDetails, fetchMovieTrailer } from '@/services/api'; // your TMDB API function
 import useFetch from '@/services/usefetch'; // replace with your hook
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Linking from 'expo-linking';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, Dimensions, Image, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -36,6 +39,35 @@ const MovieDetails = () => {
       </View>
     );
   }
+
+
+const handleTrailerPress = async () => {
+  const trailerUrl = await fetchMovieTrailer(id as string);
+  if (trailerUrl) {
+    Linking.openURL(trailerUrl);
+  } else {
+    alert("Trailer not available 🎬");
+  }
+};
+
+const handleSave = async () => {
+  try {
+    const existing = await AsyncStorage.getItem("savedMovies");
+    const saved = existing ? JSON.parse(existing) : [];
+    const alreadyExists = saved.find((m: any) => m.id === movie.id);
+
+    if (!alreadyExists) {
+      saved.push(movie);
+      await AsyncStorage.setItem("savedMovies", JSON.stringify(saved));
+      alert("Movie saved!");
+    } else {
+      alert("Movie already saved.");
+    }
+  } catch (err) {
+    console.error("Save failed", err);
+  }
+}; 
+
 
   const {
     title,
@@ -88,7 +120,7 @@ const MovieDetails = () => {
 
       {/* Buttons */}
       <View className="flex-row justify-around px-5 mt-5">
-        <Pressable className="bg-pink-500 px-6 py-4 rounded-full">
+        <Pressable className="bg-pink-500 px-6 py-4 rounded-full" onPress={handleTrailerPress}>
           <Text className=" text-white font-semibold">🎬 Trailer</Text>
         </Pressable>
         <Pressable className="bg-blue-500 px-7 py-4 rounded-full">
@@ -98,7 +130,7 @@ const MovieDetails = () => {
 
       {/* Actions */}
       <View className="flex-row justify-around px-6 mt-6">
-        <Pressable className="items-center">
+        <Pressable className="items-center" onPress={handleSave}>
           <Ionicons name="bookmark-outline" size={22} color="white" />
           <Text className="text-white text-xs">Save </Text>
         </Pressable>

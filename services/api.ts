@@ -54,6 +54,21 @@ export const fetchMovieDetails = async (
 };
 
 
+export const fetchMovieTrailer = async (id: string) => {
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`, {
+    headers: {
+      Authorization: `Bearer ${process.env.EXPO_PUBLIC_MOVIE_API_KEY}`,
+      accept: 'application/json',
+    },
+  });
+
+  const json = await res.json();
+  const youtubeTrailer = json.results?.find(
+    (video: any) => video.site === 'YouTube' && video.type === 'Trailer'
+  );
+
+  return youtubeTrailer ? `https://www.youtube.com/watch?v=${youtubeTrailer.key}` : null;
+};
 
 
 
