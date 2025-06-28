@@ -69,7 +69,7 @@ const Profile = () => {
           >
             <Image
               source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
-              className="w-full h-40"
+              className="w-full h-60  rounded-lg"
               resizeMode="cover"
             />
             <Text className="text-white text-center text-lg mt-2 mb-1 px-1 truncate">
